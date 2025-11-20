@@ -7,6 +7,9 @@ pub opaque type Options {
     active: Option(ActiveMode),
     mode: Option(Mode),
     reuseaddr: Option(Reuseaddr),
+    nodelay: Option(Nodelay),
+    send_timeout: Option(SendTimeout),
+    send_timeout_close: Option(SendTimeoutClose),
   )
 }
 
@@ -26,16 +29,38 @@ type Reuseaddr {
   Reuseaddr(Bool)
 }
 
+type Nodelay {
+  Nodelay(Bool)
+}
+
+type SendTimeout {
+  SendTimeout(Int)
+}
+
+type SendTimeoutClose {
+  SendTimeoutClose(Bool)
+}
+
 pub fn default() -> Options {
   Options(
     active: Some(Active),
     mode: Some(Binary),
     reuseaddr: Some(Reuseaddr(True)),
+    nodelay: Some(Nodelay(True)),
+    send_timeout: Some(SendTimeout(30_000)),
+    send_timeout_close: Some(SendTimeoutClose(True)),
   )
 }
 
 pub fn empty() -> Options {
-  Options(active: None, mode: None, reuseaddr: None)
+  Options(
+    active: None,
+    mode: None,
+    reuseaddr: None,
+    nodelay: None,
+    send_timeout: None,
+    send_timeout_close: None,
+  )
 }
 
 pub fn active(options: Options, active: ActiveMode) -> Options {
@@ -44,6 +69,21 @@ pub fn active(options: Options, active: ActiveMode) -> Options {
 
 pub fn reuseaddr(options: Options, reuseaddr: Bool) -> Options {
   Options(..options, reuseaddr: Some(Reuseaddr(reuseaddr)))
+}
+
+pub fn nodelay(options: Options, nodelay: Bool) -> Options {
+  Options(..options, nodelay: Some(Nodelay(nodelay)))
+}
+
+pub fn send_timeout(options: Options, send_timeout: Int) -> Options {
+  Options(..options, send_timeout: Some(SendTimeout(send_timeout)))
+}
+
+pub fn send_timeout_close(options: Options, send_timeout_close: Bool) -> Options {
+  Options(
+    ..options,
+    send_timeout_close: Some(SendTimeoutClose(send_timeout_close)),
+  )
 }
 
 pub fn to_dynamic(options: Options) -> List(Dynamic) {
@@ -62,6 +102,9 @@ pub fn to_dynamic(options: Options) -> List(Dynamic) {
   })
   |> set_option(options.mode, cast)
   |> set_option(options.reuseaddr, cast)
+  |> set_option(options.nodelay, cast)
+  |> set_option(options.send_timeout, cast)
+  |> set_option(options.send_timeout_close, cast)
 }
 
 fn set_option(
