@@ -41,18 +41,7 @@ type SendTimeoutClose {
   SendTimeoutClose(Bool)
 }
 
-pub fn default() -> Options {
-  Options(
-    active: Some(Active),
-    mode: Some(Binary),
-    reuseaddr: Some(Reuseaddr(True)),
-    nodelay: Some(Nodelay(True)),
-    send_timeout: Some(SendTimeout(30_000)),
-    send_timeout_close: Some(SendTimeoutClose(True)),
-  )
-}
-
-pub fn empty() -> Options {
+pub fn new() -> Options {
   Options(
     active: None,
     mode: None,
@@ -65,6 +54,10 @@ pub fn empty() -> Options {
 
 pub fn active(options: Options, active: ActiveMode) -> Options {
   Options(..options, active: Some(active))
+}
+
+pub fn mode(options: Options, mode: Mode) -> Options {
+  Options(..options, mode: Some(mode))
 }
 
 pub fn reuseaddr(options: Options, reuseaddr: Bool) -> Options {
